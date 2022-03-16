@@ -25,13 +25,13 @@
             <div class="collapse navbar-collapse" id="navbarCollapse">
                 <ul class="navbar-nav me-auto mb-2 mb-md-0">
                     <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="#">Home</a>
+                        <a class="nav-link active" aria-current="page" href="/">Home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Link</a>
+                        <a class="nav-link active" href="/write">Post Now</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link disabled">Disabled</a>
+                        <a class="nav-link active" href="/list">List</a>
                     </li>
                 </ul>
                 <form class="d-flex">
@@ -42,22 +42,21 @@
         </div>
     </nav>
 
-    <a class="btn btn-lg btn-primary" href="/" role="button" style="margin-left: 9%; margin-bottom: 10px;">Go Back
-        &raquo;</a>
-
     <% for (var i=posts.length - 1; i>= 0; i--) { %>
-        <main class="container">
-            <div class="bg-light p-5 rounded">
-                <h1>
+        <ul class="list-group">
+            <li class="list-group-item">
+                <h2>
                     <%= posts[i]?.title %>
-                </h1>
+                </h2>
                 <p class="lead">
                     <%= posts[i]?.DateTime %>
                 </p>
-                <a class="btn btn-lg btn-primary" role="button">Delete &raquo;</a>
-            </div>
-        </main>
+                <button class="btn btn-danger">Delete</button>
+            </li>
+        </ul>
         <% } %>
+
+            <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
 
             <script src="./assets/dist/js/bootstrap.bundle.min.js"></script>
 
