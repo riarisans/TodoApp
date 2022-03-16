@@ -29,7 +29,9 @@ MongoClient.connect(
 
         let server = app.listen(8080, () => {
             let address = server.address();
-            console.log(`서버가 열렸습니다! (${server.address()})`);
+            console.log(
+                `서버가 열렸습니다! (${JSON.stringify(server.address())})`
+            );
         });
 
         app.get("/", (req, res) => {
@@ -53,9 +55,13 @@ MongoClient.connect(
                         },
                         (error, result) => {
                             if (error)
-                                console.log(`[${req.ip}] ${error.message}`);
+                                console.log(
+                                    `[${req.ip}] 글 추가 처리중 에러발생 ${error.message}`
+                                );
                             else {
-                                console.log(`[${req.ip}] ${req.body?.title}`);
+                                console.log(
+                                    `[${req.ip}] 글 추가 ${req.body?.title}`
+                                );
                                 db.collection("counter").updateOne(
                                     { name: "postCount" },
                                     { $inc: { totalPost: 1 } }
@@ -79,6 +85,33 @@ MongoClient.connect(
                     }
                     res.render("list.ejs", { posts: result });
                 });
+        });
+
+        app.delete("/delete", (req, res) => {
+            req.body._id = Number(req.body._id);
+            console.log(`[${req.ip}] 글 삭제 로그 ${JSON.stringify(req.body)}`);
+            db.collection("post").findOne(
+                { _id: req.body._id },
+                (error, result) => {
+                    if (error)
+                        return res.status(400).send("에러가 발생했습니다");
+                    else if (!result)
+                        return res.status(400).send("이미 삭제된 글입니다.");
+                    else {
+                        db.collection("post").deleteOne(
+                            req.body,
+                            (error, result) => {
+                                if (error) {
+                                    return res.status(400).send(error.message);
+                                }
+                                return res
+                                    .status(200)
+                                    .send("글 삭제에 성공했습니다.");
+                            }
+                        );
+                    }
+                }
+            );
         });
     }
 );
