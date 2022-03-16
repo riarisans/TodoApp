@@ -41,19 +41,33 @@ MongoClient.connect(
         });
 
         app.post("/add", (req, res) => {
-            db.collection("post").insertOne(
-                {
-                    title: req.body?.title,
-                    DateTime: new Date().toLocaleString(),
-                    hasCleared: false,
-                },
+            db.collection("counter").findOne(
+                { name: "postCount" },
                 (error, result) => {
-                    if (error) console.log(`[${req.ip}] ${error.message}`);
-                    else console.log(`[${req.ip}] ${req.body?.title}`);
+                    db.collection("post").insertOne(
+                        {
+                            _id: result?.totalPost,
+                            title: req.body?.title,
+                            DateTime: new Date().toLocaleString(),
+                            hasCleared: false,
+                        },
+                        (error, result) => {
+                            if (error)
+                                console.log(`[${req.ip}] ${error.message}`);
+                            else {
+                                console.log(`[${req.ip}] ${req.body?.title}`);
+                                db.collection("counter").updateOne(
+                                    { name: "postCount" },
+                                    { $inc: { totalPost: 1 } }
+                                );
+                            }
+                        }
+                    );
                 }
             );
-
-            return res.redirect("./list");
+            setTimeout(() => {
+                res.redirect("./list");
+            }, 100);
         });
 
         app.get("/list", (req, res) => {
